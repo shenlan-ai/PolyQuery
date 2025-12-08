@@ -1,5 +1,9 @@
 # PolyQuery
 
+<div align="right">
+  <a href="README_EN.md">English</a> | <b>中文</b>
+</div>
+
 <p align="center">
   <img src="public/icon.ico" alt="PolyQuery Logo" width="128" height="128">
 </p>
@@ -18,6 +22,10 @@
 
 - **同时和多个AI聊天**: 你可以同时在多个AI平台上进行对话和比较，从而更全面地了解信息并感受模型的好坏。
 - **便捷输入**: 你可以通过PolyQuery的功能快速向多个网站发送消息，只需输入关键字即可。
+<video width="100%" controls>
+  <source src="public/基本使用说明.mp4" type="video/mp4">
+  您的浏览器不支持视频标签。
+</video>
 
 ## 功能特性
 
