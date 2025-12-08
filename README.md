@@ -9,10 +9,6 @@
 </p>
 
 <p align="center">
-  这不仅是一个免费的、基于网页的多AI聊天桌面客户端，支持同时在多个AI平台上进行对话和比较；也是一个快捷的搜索工具，帮你打破信息茧房，快捷地获取充足的信息。
-</p>
-
-<p align="center">
   <img alt="GitHub release" src="https://img.shields.io/github/release/shenlan-ai/PolyQuery.svg">
   <img alt="License" src="https://img.shields.io/github/license/shenlan-ai/PolyQuery.svg">
   <img alt="Platform" src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-blue.svg">

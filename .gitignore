@@ -29,3 +29,7 @@ release
 out/
 
 .env
+
+build_linux_installer.build_linux_installer
+dockerfile
+.dockerignore
