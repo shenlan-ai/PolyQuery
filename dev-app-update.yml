@@ -1,0 +1,4 @@
+provider: github
+owner: shenlan-ai
+repo: PolyQuery
+releaseType: release

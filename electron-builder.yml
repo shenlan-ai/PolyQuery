@@ -1,0 +1,38 @@
+appId: com.shenlan-ai.PolyQuery
+productName: PolyQuery
+icon: ./public/icon.ico
+directories:
+  buildResources: build
+  output: release/${version}  # 自定义输出路径，可以使用变量如 ${version}
+files:
+  - dist
+  - dist-electron
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64 # 仅打包 64 位 Windows 安装包
+  icon: ./public/icon.ico
+  artifactName: ${productName}-Windows-${version}-Installer.${ext} # 安装包命名格式
+mac:
+  target:
+    - dmg # 打包为 Mac DMG 镜像
+  icon: ./public/icon.icns # Mac 专用图标格式（需单独准备）
+  artifactName: ${productName}-Mac-${version}-Installer.${ext}
+nsis:
+  oneClick: false # 禁用一键安装（显示安装向导）
+  perMachine: false # 不按机器全局安装（按当前用户安装）
+  allowToChangeInstallationDirectory: true # 允许用户修改安装目录
+  deleteAppDataOnUninstall: false # 卸载时不删除 AppData 数据
+  installerIcon: ./public/icon.ico # 安装程序图标
+linux:
+  target:
+    - deb
+  artifactName: ${productName}-Linux-${version}-Installer.${ext}
+  category: Utility
+npmRebuild: false
+publish:
+  provider: github
+  owner: shenlan-ai
+  repo: PolyQuery
+  releaseType: release
