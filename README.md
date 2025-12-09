@@ -63,11 +63,10 @@
 ### 功能介绍视频
 
 1. B站：
-[PolyQuery 中文功能介绍](https://www.bilibili.com/video/BV1zK4y1a7yT/) 
-[PolyQuery 英文功能介绍](https://www.bilibili.com/video/BV17K4y1a7yT/)
+[PolyQuery 中文功能介绍](https://www.bilibili.com/video/BV1Lc2XBxEsq/?spm_id_from=333.1387.homepage.video_card.click&vd_source=16ed0aba9ffea73f0fca57b1c954a314)
+[PolyQuery 英文功能介绍](https://www.bilibili.com/video/BV1Lc2XBxEsq/?spm_id_from=333.1387.homepage.video_card.click)
 2. X.com：
-[PolyQuery 中文功能介绍](https://www.ixigua.com/6939022890992222215/) 
-[PolyQuery 英文功能介绍](https://www.ixigua.com/6939022890992222215/)
+[PolyQuery 英文功能介绍](https://x.com/lgy_go_future/status/1998283393365328086)
 
 ## 安装
 
