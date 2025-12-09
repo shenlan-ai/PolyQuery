@@ -18,10 +18,10 @@
 
 - **同时和多个AI聊天**: 你可以同时在多个AI平台上进行对话和比较，从而更全面地了解信息并感受模型的好坏。
 - **便捷输入**: 你可以通过PolyQuery的功能快速向多个网站发送消息，只需输入关键字即可。
-<video width="100%" controls>
+<!-- <video width="100%" controls>
   <source src="https://raw.githubusercontent.com/shenlan-ai/PolyQuery/main/public/%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E.mp4" type="video/mp4">
   您的浏览器不支持视频标签。
-</video>
+</video> -->
 
 ## 功能特性
 
@@ -258,6 +258,7 @@ A: 配置文件存储在用户数据目录中，可以手动复制electron-store
 - [Electron](https://electronjs.org/) - 桌面应用框架
 - [Vue.js](https://vuejs.org/) - 前端框架
 - [Vite](https://vitejs.dev/) - 构建工具
+- [Icons8](https://icons8.com/) - 图标资源
 - 所有支持的AI平台提供商
 
 ## 👥 贡献者
