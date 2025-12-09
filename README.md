@@ -64,7 +64,6 @@
 
 1. B站：
 [PolyQuery 中文功能介绍](https://www.bilibili.com/video/BV1Lc2XBxEsq/?spm_id_from=333.1387.homepage.video_card.click&vd_source=16ed0aba9ffea73f0fca57b1c954a314)
-[PolyQuery 英文功能介绍](https://www.bilibili.com/video/BV1Lc2XBxEsq/?spm_id_from=333.1387.homepage.video_card.click)
 2. X.com：
 [PolyQuery 英文功能介绍](https://x.com/lgy_go_future/status/1998283393365328086)
 
