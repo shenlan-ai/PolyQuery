@@ -264,7 +264,7 @@ A: 配置文件存储在用户数据目录中，可以手动复制electron-store
 感谢以下优秀的贡献者们：
 
 - [yaolan](https://github.com/lgylgy1)
-- [Xu Ziqi](https://github.com/mersault18)
+- [Xu Ziqi](https://github.com/ClaudiaXuzq)
 
 
 <!-- ## 📈 项目统计
