@@ -1,13 +1,17 @@
 import { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain, dialog, shell } from 'electron'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
-import { autoUpdater } from 'electron-updater';
+// import { autoUpdater } from 'electron-updater';
 import path from 'node:path'
 import Store from 'electron-store'
+import type { UpdateInfo } from 'electron-updater'
 // import { WebsiteData } from './website_data.ts'
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+// 导入electron-updater
+const { autoUpdater } = require('electron-updater')
 
 // 初始化electron-store
 const store = new Store()
@@ -161,14 +165,31 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) {
+  if (win && !win.isVisible()) {
+    win.show()
+  } else if (BrowserWindow.getAllWindows().length === 0) {
     createWindow()
     setupAutoUpdater()
   }
 })
 
+let gotTheLock = app.requestSingleInstanceLock()
+
+if (!gotTheLock) {
+  app.quit()
+  process.exit(0)
+}
+
 // 设置应用名称
 app.setName('PolyQuery')
+
+app.on('second-instance', () => {
+  // 当尝试启动第二个实例时，显示主窗口
+  if (win) {
+    win.show()
+    win.focus()
+  }
+})
 
 // 应用启动后创建窗口并注册快捷键
 app.whenReady().then(() => {
@@ -257,7 +278,7 @@ function setupAutoUpdater() {
 
   // 3. 监听更新事件
   // 事件1：发现新版本
-  autoUpdater.on('update-available', (info) => {
+  autoUpdater.on('update-available', (info: UpdateInfo) => {
     if (win){
       dialog.showMessageBox(win, {
         type: 'info',
@@ -284,7 +305,7 @@ function setupAutoUpdater() {
   });
 
   // 事件3：更新下载完成
-  autoUpdater.on('update-downloaded', (_info) => {
+  autoUpdater.on('update-downloaded', (_info: UpdateInfo) => {
     if (win) {
       dialog.showMessageBox(win, {
         type: 'info',
@@ -300,7 +321,7 @@ function setupAutoUpdater() {
   });
 
   // 事件4：更新失败
-  autoUpdater.on('error', (err) => {
+  autoUpdater.on('error', (err: Error) => {
     // 构建详细的错误信息
     let errorMessage = '更新出错：';
     let errorDetail = '';

@@ -2,7 +2,7 @@
   "name": "polyquery",
   "author": "lgy <2985302084@qq.com>",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "productName": "PolyQuery",
   "description": "A multi-source intelligent search tool that simultaneously sends your query to multiple websites and instantly delivers high-quality information.",
   "type": "module",
@@ -29,7 +29,8 @@
     "@ant-design/icons-vue": "^7.0.1",
     "ant-design-vue": "^4.2.6",
     "electron-squirrel-startup": "^1.0.1",
-    "vue": "^3.4.21"
+    "vue": "^3.4.21",
+    "electron-updater": "^6.6.2"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.10.2",
@@ -47,7 +48,6 @@
     "electron": "^30.0.1",
     "electron-builder": "^26.0.12",
     "electron-store": "^11.0.2",
-    "electron-updater": "^6.6.2",
     "openai": "^6.9.1",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
