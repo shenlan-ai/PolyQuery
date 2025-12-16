@@ -33,3 +33,7 @@ out/
 build_linux_installer.build_linux_installer
 dockerfile
 .dockerignore
+
+*cookies.json
+screenshots
+__pycache__
