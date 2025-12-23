@@ -5,6 +5,8 @@ import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import Store from 'electron-store'
 import type { UpdateInfo } from 'electron-updater'
+// import LLMConversation from './llm_conversation.ts'
+// import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions'
 // import { WebsiteData } from './website_data.ts'
 
 const require = createRequire(import.meta.url)

@@ -4,12 +4,29 @@ from configuration import conversation_file
 import asyncio, json, ast
 from typing import List, Dict
 
-async def chat_many():
-    with open(conversation_file, 'r', encoding='utf-8') as f:
-        json_data = json.load(f)
-    query = "123"
-    playwright_instance, browser, context, page = await create_browser_context(headless=False)
-    query_js = """(async function universalFill(message, sendSelector = '', startDelay = 0) {
+async def chat(query_js: str, selector: str, code: str, url: str, playwright_instance=None, browser=None, context=None, page=None) -> List[List[Dict[str, str]]]:
+    query_js = query_js.replace('{SELECTOR}', selector)
+    result_list, console_logs, screenshot_path, search_url = await execute_js([query_js], url, playwright_instance, browser, context, page)
+    await asyncio.sleep(2,5)
+    result_list, console_logs, screenshot_path, search_url = await execute_js([code], search_url, playwright_instance, browser, context, page)
+    if type(result_list[0]) == str:
+      result: List[Dict[str, str]] = json.loads(result_list[0])
+    else:
+      result: List[Dict[str, str]] = result_list[0]
+    for message in result:
+       if message['role'] == 'assistant':
+          message['role'] = url
+    return result
+
+async def chat_many(query: str):
+    try:
+      with open(conversation_file, 'r', encoding='utf-8') as f:
+          json_data = json.load(f)
+      playwright_instance, browser, context = await create_browser_context(headless=False)
+      num_pages = 5
+      pages = [await context.new_page() for _ in range(num_pages)]
+      semaphore = asyncio.Semaphore(5)
+      query_js = """(async function universalFill(message, sendSelector = '', startDelay = 0) {
   const sleep = ms => new Promise(r => setTimeout(r, ms));
   /* ---------- 工具函数 ---------- */
   async function waitFor(sel, timeout = 10_000) {
@@ -89,11 +106,30 @@ async def chat_many():
     console.error('[UniversalFill]', e);
   }
 })"""+f"(\"{query}\");"
-    query_js = query_js.replace('{SELECTOR}', 'div[contenteditable="true"][role="textbox"][data-lexical-editor="true"]')
-    result_list, console_logs, screenshot_path, search_url = await execute_js([query_js], json_data[0]['url'], playwright_instance, browser, context, page)
-    result_list, console_logs, screenshot_path, search_url = await execute_js([json_data[0]['code']], search_url, playwright_instance, browser, context, page)
-    result: List[List[Dict[str, str]]] = json.loads(result_list[0])
-    print(result)
+      async def run_chat(data, page):
+          async with semaphore:
+              return await chat(query_js, data['selector'], data['code'], data['url'], playwright_instance, browser, context, page)
+      tasks = [run_chat(data, pages[i % num_pages]) for i, data in enumerate(json_data)]
+      results = await asyncio.gather(*tasks)
+      return results
+    finally:
+      for page in pages:
+          await page.close()
+      await context.close()
+      await browser.close()
+      await playwright_instance.stop()
 
 if __name__ == "__main__":
-    asyncio.run(chat_many())
+    query = '写一篇10000字的文章介绍web3.0'
+    results = asyncio.run(chat_many(query))
+    # print(results)
+    all_reply = []
+    for result in results:
+       find_query = False
+       for message in result:
+          if find_query:
+            all_reply.append(f"🤖 {message['role']} :\n{message['content']}\n")
+            break
+          if message['content'] == query:
+            find_query = True    
+    print('\n'.join(all_reply))

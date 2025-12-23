@@ -21,7 +21,7 @@ async def execute_js(js_code_list: list[str], url: str, playwright_instance=None
         result_list = []
         for js_code in js_code_list:
             try:
-                print(f"执行JS代码: {js_code}")
+                # print(f"执行JS代码: {js_code}")
                 result_list.append(await page.evaluate(js_code))
                 await page.wait_for_load_state('domcontentloaded')
                 await asyncio.sleep(random.uniform(3, 5))
@@ -34,7 +34,7 @@ async def execute_js(js_code_list: list[str], url: str, playwright_instance=None
         screenshot_path = os.path.join(screenshot_dir, f'screenshot_{timestamp}.png')
         await page.screenshot(path=screenshot_path)
         search_url = page.url
-        print(f"当前页面 URL: {search_url}")
+        # print(f"当前页面 URL: {search_url}")
     except Exception as e:
         return [f"出错: {e}"], [], "", page.url
     finally:

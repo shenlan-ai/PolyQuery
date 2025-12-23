@@ -9,7 +9,8 @@ from patchright.async_api import async_playwright
 import tempfile
 import os
 from fake_useragent import UserAgent
-from configuration import cookie_file
+from configuration import cookie_file, browser_path
+# print(browser_path)
 
 # Initialize fake user agent generator
 try:
@@ -135,7 +136,7 @@ async def handle_login(url: str, storage_state_file: str = cookie_file):
     playwright_instance = await async_playwright().start()
     browser = await playwright_instance.chromium.launch(
         headless=False,
-        executable_path="C:/Program Files/Google/Chrome/Application/chrome.exe",
+        executable_path=browser_path,
         args=[
             '--disable-blink-features=AutomationControlled',
             '--disable-extensions',
@@ -201,7 +202,7 @@ async def create_browser_context(headless: bool = False, storage_state_file: str
     playwright_instance = await async_playwright().start()
     browser = await playwright_instance.chromium.launch(
         headless=headless,
-        executable_path="C:/Program Files/Google/Chrome/Application/chrome.exe",
+        executable_path=browser_path,
         args=[
             '--disable-blink-features=AutomationControlled',
             '--disable-extensions',
@@ -234,8 +235,7 @@ async def create_browser_context(headless: bool = False, storage_state_file: str
         geolocation={'latitude': random.uniform(-90, 90), 'longitude': random.uniform(-180, 180)},
         storage_state=storage_state_file
     )
-    page = await context.new_page()
-    return playwright_instance, browser, context, page
+    return playwright_instance, browser, context
 
 
 async def get_picture(url: str) -> str:

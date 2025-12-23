@@ -59,3 +59,5 @@ llm_config = LLMConfiguration()
 code_llm_config = CodeLLMConfiguration()
 cookie_file = "experience/cookies.json"
 conversation_file = "experience/crawl_conversation.json"
+load_dotenv("experience/.env")
+browser_path = os.getenv("BROWSER_PATH")

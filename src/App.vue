@@ -6,6 +6,7 @@ import { ipcRenderer } from 'electron'
 import { setWebsiteConfigs, setAllWebsiteConfigs, getWebsiteConfigs, getAllWebsiteConfigs } from './types/website'
 import { Button } from 'ant-design-vue'
 import { UpOutlined, DownOutlined, SendOutlined } from '@ant-design/icons-vue'
+// import ChatComponent from './components/ChatComponent.vue'
 
 const message = ref('')
 const webViewsRef = ref<InstanceType<typeof WebViews> | null>(null)
@@ -66,6 +67,7 @@ const handleSelectWebsite = (url: string) => {
   <div class="app">
     <WebSiteList :collapsed="!isSidebarOpen" @toggle-sidebar="toggleSidebar" @select-website="handleSelectWebsite" class="websiteList"></WebSiteList>
     <div class="interact-area">
+      <!-- <ChatComponent></ChatComponent> -->
       <WebViews ref="webViewsRef" class="webviews"></WebViews>
       <div class="input-container" :class="{ collapsed: isInputCollapsed }">
         <div class="textarea-wrapper">
