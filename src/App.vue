@@ -92,10 +92,9 @@ const handleSelectWebsite = (url: string) => {
           ></textarea>
           <Button
             class="optimize-button"
-            shape="circle"
             @click="optimizeMessage"
           >
-            优化
+            optimize
           </Button>
           <Button
             class="send-button"
@@ -228,28 +227,29 @@ const handleSelectWebsite = (url: string) => {
 
 .optimize-button {
   position: absolute;
-  bottom: 12px;
-  right: 68px;
-  width: 40px;
-  height: 40px;
-  border: 2px solid #6366f1 !important;
-  background: #6366f1 !important;
+  bottom: 14px;
+  right: 78px;
+  width: 64px;
+  height: 36px;
+  border: 2px solid #000dff !important;
+  background: #000000 !important;
   color: #ffffff !important;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  font-size: 12px;
+  font-size: 13px;
+  border-radius: 20px;
 }
 
 .optimize-button:hover {
-  border-color: #4c51bf !important;
-  background: #4c51bf !important;
+  border-color: #1a23c4 !important;
+  background: #1a23c0 !important;
   color: #ffffff !important;
 }
 
 .optimize-button:active {
-  background: #3730a3 !important;
+  background: #372be2 !important;
 }
 
 .send-button {
