@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { Button } from 'ant-design-vue'
+import { SendOutlined } from '@ant-design/icons-vue'
+import { ipcRenderer } from 'electron'
 
 const message = ref('')
 
@@ -8,6 +11,17 @@ const sendMessage = async () => {
     // 发送消息到主进程，进而调用主窗口的WebViews实例
     (window as any).ipcRenderer.send('send-message-to-main-window', message.value)
     message.value = ''
+  }
+}
+
+const optimizeMessage = async () => {
+  if (message.value.trim()) {
+    try {
+      const optimizedText = await ipcRenderer.invoke('optimize-prompt', message.value)
+      message.value = optimizedText
+    } catch (error) {
+      console.error('Failed to optimize prompt:', error)
+    }
   }
 }
 </script>
@@ -22,9 +36,22 @@ const sendMessage = async () => {
           placeholder="How can I help you today?"
           rows="3"
         ></textarea>
-        <button @click="sendMessage">
-          <img class="send-icon" src="./assets/sendIcon.svg"/>
-        </button>
+        
+        <Button
+          class="optimize-button"
+          @click="optimizeMessage"
+        >
+          optimize
+        </Button>
+        <Button
+          class="send-button"
+          shape="circle"
+          @click="sendMessage"
+        >
+          <template #icon>
+            <SendOutlined />
+          </template>
+        </Button>
       <!-- </div> -->
     </div>
 </template>
@@ -56,7 +83,7 @@ const sendMessage = async () => {
 .input-container textarea {
   width: 100%;
   height: 100%;
-  padding: 14px 60px 14px 16px;
+  padding: 14px 120px 14px 16px;
   border: 1px solid #d1d5db;
   border-radius: 12px;
   background: #ffffff;
@@ -83,48 +110,55 @@ const sendMessage = async () => {
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
-.input-container button {
+.send-button {
   position: absolute;
   bottom: 12px;
   right: 12px;
   width: 40px;
-  height: 40px;
-  cursor: pointer;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border: none;
-  border-radius: 50%;
+  height:40px;
+  border: 2px solid #000000 !important;
+  background: #000000 !important;
+  color: #ffffff !important;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4), 0 2px 8px rgba(118, 75, 162, 0.2);
-  animation: subtle-pulse 2s infinite;
+  transition: all 0.2s ease;
 }
 
-.input-container button:hover {
-  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6), 0 4px 12px rgba(118, 75, 162, 0.3);
+.send-button:hover {
+  border-color: #000000 !important;
+  background: #333333 !important;
+  color: #ffffff !important;
 }
 
-.input-container button:active {
-  transform: translateY(0) scale(0.98);
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4), 0 1px 4px rgba(118, 75, 162, 0.2);
+.send-button:active {
+  background: #1a1a1a !important;
 }
 
-@keyframes subtle-pulse {
-  0%, 100% {
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4), 0 2px 8px rgba(118, 75, 162, 0.2);
-  }
-  50% {
-    box-shadow: 0 4px 18px rgba(102, 126, 234, 0.5), 0 2px 10px rgba(118, 75, 162, 0.25);
-  }
+.optimize-button {
+  position: absolute;
+  bottom: 14px;
+  right: 78px;
+  width: 64px;
+  height: 36px;
+  border: 2px solid #000dff !important;
+  background: #000000 !important;
+  color: #ffffff !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 13px;
+  border-radius: 20px;
 }
 
-.input-container button .send-icon {
-  fill: white;
-  width: 25px;
-  height: 25px;
-  margin-top: 2px;
+.optimize-button:hover {
+  border-color: #1a23c4 !important;
+  background: #1a23c0 !important;
+  color: #ffffff !important;
+}
+
+.optimize-button:active {
+  background: #372be2 !important;
 }
 </style>
