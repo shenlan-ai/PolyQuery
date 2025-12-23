@@ -1,13 +1,21 @@
 from execute_js import execute_js
 from webpage_analyzer import create_browser_context
 from configuration import conversation_file
-import asyncio, json, ast
+import asyncio, json, ast, time
 from typing import List, Dict
 
 async def chat(query_js: str, selector: str, code: str, url: str, playwright_instance=None, browser=None, context=None, page=None) -> List[List[Dict[str, str]]]:
     query_js = query_js.replace('{SELECTOR}', selector)
     result_list, console_logs, screenshot_path, search_url = await execute_js([query_js], url, playwright_instance, browser, context, page)
-    await asyncio.sleep(2,5)
+    # 等待网络流量停止
+    last_response_time = [time.time()]
+    def update_last_response_time():
+        last_response_time[0] = time.time()
+    page.on('response', update_last_response_time)
+    threshold = 5.0  # 5秒无网络响应，认为响应完成
+    while time.time() - last_response_time[0] < threshold:
+        await asyncio.sleep(0.5)
+    page.remove_listener('response', update_last_response_time)
     result_list, console_logs, screenshot_path, search_url = await execute_js([code], search_url, playwright_instance, browser, context, page)
     if type(result_list[0]) == str:
       result: List[Dict[str, str]] = json.loads(result_list[0])

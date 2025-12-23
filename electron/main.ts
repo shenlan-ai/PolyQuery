@@ -5,8 +5,10 @@ import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import Store from 'electron-store'
 import type { UpdateInfo } from 'electron-updater'
-// import LLMConversation from './llm_conversation.ts'
-// import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions'
+import LLMConversation from './llm_conversation.ts'
+import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions'
+import { optimizePrompt } from './prompt_optimizer.ts'
+
 // import { WebsiteData } from './website_data.ts'
 
 const require = createRequire(import.meta.url)
@@ -51,6 +53,7 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 
 let win: BrowserWindow | null
 let tray: Tray | null
 let isQuitting = false  // 退出标志，用于区分关闭窗口和退出应用
+let conversation: LLMConversation | null = null
 
 function createBlankWindow() {
   const smallWin = new BrowserWindow({
@@ -205,6 +208,13 @@ app.whenReady().then(() => {
     safeLog('快捷键注册失败')
   }
 
+  // 创建 LLM conversation 实例
+  try {
+    conversation = new LLMConversation()
+  } catch (error) {
+    safeLog('Failed to initialize LLM conversation:', error)
+  }
+
   // 监听来自Smallwin的发送消息请求，转发到主窗口
   ipcMain.on('send-message-to-main-window', (_event, message) => {
     if (win) {
@@ -239,6 +249,21 @@ app.whenReady().then(() => {
     //   WebsiteData.push(...loadedData)
     // }
     return store.get('allWebsiteConfigs', null)
+  })
+
+  // 优化提示词
+  ipcMain.handle('optimize-prompt', async (_event, prompt: string) => {
+    if (!conversation) {
+      throw new Error('LLM conversation not initialized')
+    }
+    try {
+      const optimized = await optimizePrompt(prompt, conversation)
+      safeLog('Optimized prompt:', optimized)
+      return optimized
+    } catch (error) {
+      safeLog('Error optimizing prompt:', error)
+      throw error
+    }
   })
 })
 

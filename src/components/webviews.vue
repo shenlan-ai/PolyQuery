@@ -135,7 +135,7 @@ const sendMessage = async (message: string) => {
       const webview = webviews.value[website.url]
       if (webview && webviewReady.value[website.url]) {
         const code = codeTemplate.replace('{SELECTOR}', website.selector) + `(${JSON.stringify(message)})`
-        console.log(`Executing code for ${website.url}:`, code)
+        // console.log(`Executing code for ${website.url}:`, code)
         webview.executeJavaScript(code).catch((error: any) => {
           console.error('executeJavaScript failed for', website.url, error)
         })

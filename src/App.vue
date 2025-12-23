@@ -10,17 +10,30 @@ import { UpOutlined, DownOutlined, SendOutlined } from '@ant-design/icons-vue'
 
 const message = ref('')
 const webViewsRef = ref<InstanceType<typeof WebViews> | null>(null)
-const isSidebarOpen = ref(true)
+const isSidebarOpen = ref(false)
 const isInputCollapsed = ref(false)
+
 
 const sendMessage = async (msg?: string) => {
   const text = msg || message.value
+  if (!msg) message.value = ''
   if (text.trim()) {
     // 调用子组件的sendMessage方法
     if (webViewsRef.value) {
       webViewsRef.value.sendMessage(text)
     }
-    if (!msg) message.value = ''
+  }
+}
+
+const optimizeMessage = async () => {
+  if (message.value.trim()) {
+    try {
+      const optimizedText = await ipcRenderer.invoke('optimize-prompt', message.value)
+      message.value = optimizedText
+    } catch (error) {
+      console.error('Failed to optimize prompt:', error)
+      // 可以添加用户提示，但暂时用 console
+    }
   }
 }
 
@@ -77,6 +90,13 @@ const handleSelectWebsite = (url: string) => {
             placeholder="How can I help you today?"
             rows="3"
           ></textarea>
+          <Button
+            class="optimize-button"
+            shape="circle"
+            @click="optimizeMessage"
+          >
+            优化
+          </Button>
           <Button
             class="send-button"
             shape="circle"
@@ -179,7 +199,7 @@ const handleSelectWebsite = (url: string) => {
 
 .input-container textarea {
   width: 100%;
-  padding: 14px 60px 14px 16px;
+  padding: 14px 120px 14px 16px;
   border: 1px solid #d1d5db;
   border-radius: 12px;
   background: #ffffff;
@@ -204,6 +224,32 @@ const handleSelectWebsite = (url: string) => {
   border-color: #6366f1;
   background: #ffffff;
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.optimize-button {
+  position: absolute;
+  bottom: 12px;
+  right: 68px;
+  width: 40px;
+  height: 40px;
+  border: 2px solid #6366f1 !important;
+  background: #6366f1 !important;
+  color: #ffffff !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 12px;
+}
+
+.optimize-button:hover {
+  border-color: #4c51bf !important;
+  background: #4c51bf !important;
+  color: #ffffff !important;
+}
+
+.optimize-button:active {
+  background: #3730a3 !important;
 }
 
 .send-button {
@@ -269,7 +315,8 @@ const handleSelectWebsite = (url: string) => {
 }
 
 .input-container.collapsed .textarea-wrapper,
-.input-container.collapsed .send-button {
+.input-container.collapsed .send-button,
+.input-container.collapsed .optimize-button {
   display: none;
 }
 

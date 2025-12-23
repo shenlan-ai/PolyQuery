@@ -43,10 +43,11 @@ export async function optimizePrompt(prompt: string, conversation: LLMConversati
     },
     {
       role: "user",
-      content: `${similarPrompts}\n参考上面的${k}段提示词模板，为我优化下面的提示词：\n${prompt}。\n只给出优化后的提示词，不要输出任何其他内容。`
+      content: `${similarPrompts}\n参考上面的${k}段提示词模板，仿照模板的格式为我优化下面的提示词：\n${prompt}。\n只给出优化后的提示词，不要输出任何其他内容。优化后的提示词的语言（中文、英文等）要和优化前的语言一致`
     }
   ];
   const response = await conversation.sendMessage(messages, 5000);
+  console.log('response:', response)
   return response;
 }
 
