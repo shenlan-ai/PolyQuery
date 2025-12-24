@@ -121,7 +121,7 @@ const optimizeMessage = async () => {
   right: 12px;
   width: 40px;
   height:40px;
-  border: 2px solid #000000 !important;
+  border: 2px solid #000dff !important;
   background: #000000 !important;
   color: #ffffff !important;
   display: flex;

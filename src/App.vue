@@ -187,14 +187,14 @@ const handleSettingsCancel = () => {
       @cancel="handleSettingsCancel"
     >
       <Form :model="form" layout="vertical">
-        <FormItem label="API Key" name="apiKey" help="用于访问 LLM 服务的密钥，请输入有效的 API Key">
-          <Input v-model:value="form.apiKey" placeholder="例如: sk-..." />
+        <FormItem label="API Key" name="apiKey" help="Apikey for accessing LLM services, used to optimize prompts.">
+          <Input v-model:value="form.apiKey" placeholder="sk-..." />
         </FormItem>
-        <FormItem label="Base URL" name="baseUrl" help="LLM 服务的端点地址，默认使用 PolyQuery 服务">
-          <Input v-model:value="form.baseUrl" placeholder="例如: https://api.example.com/v1" />
+        <FormItem label="Base URL" name="baseUrl" help="Base url for accessing LLM services, used to optimize prompts.">
+          <Input v-model:value="form.baseUrl" placeholder="https://api.example.com/v1" />
         </FormItem>
-        <FormItem label="Model" name="model" help="使用的 LLM 模型名称，请根据服务支持的模型填写">
-          <Input v-model:value="form.model" placeholder="例如: gpt-4, gpt-3.5-turbo" />
+        <FormItem label="Model" name="model" help="Model for optimizing prompts.">
+          <Input v-model:value="form.model" placeholder="gpt-4, gpt-3.5-turbo" />
         </FormItem>
       </Form>
     </Modal>
@@ -271,6 +271,7 @@ const handleSettingsCancel = () => {
 .textarea-wrapper {
   position: relative;
   width: 100%;
+  /* height: 100%; */
   flex: 1;
 }
 
@@ -306,7 +307,7 @@ const handleSettingsCancel = () => {
 .optimize-button {
   position: absolute;
   bottom: 14px;
-  right: 78px;
+  right: 105px;
   width: 64px;
   height: 36px;
   border: 2px solid #000dff !important;
@@ -333,10 +334,10 @@ const handleSettingsCancel = () => {
 .settings-button {
   position: absolute;
   bottom: 12px;
-  right: 148px;
+  right: 58px;
   width: 40px;
   height: 40px;
-  border: 2px solid #000000 !important;
+  border: 2px solid #000dff !important;
   background: #000000 !important;
   color: #ffffff !important;
   display: flex;
@@ -346,7 +347,7 @@ const handleSettingsCancel = () => {
 }
 
 .settings-button:hover {
-  border-color: #000000 !important;
+  border-color: #1a23c4 !important;
   background: #333333 !important;
   color: #ffffff !important;
 }
@@ -361,7 +362,7 @@ const handleSettingsCancel = () => {
   right: 12px;
   width: 40px;
   height:40px;
-  border: 2px solid #000000 !important;
+  border: 2px solid #000dff !important;
   background: #000000 !important;
   color: #ffffff !important;
   display: flex;
@@ -371,7 +372,7 @@ const handleSettingsCancel = () => {
 }
 
 .send-button:hover {
-  border-color: #000000 !important;
+  border-color: #1a23c4 !important;
   background: #333333 !important;
   color: #ffffff !important;
 }
