@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import { Button } from 'ant-design-vue'
 import { SendOutlined } from '@ant-design/icons-vue'
-import { ipcRenderer } from 'electron'
 
 const message = ref('')
 
@@ -17,7 +16,13 @@ const sendMessage = async () => {
 const optimizeMessage = async () => {
   if (message.value.trim()) {
     try {
-      const optimizedText = await ipcRenderer.invoke('optimize-prompt', message.value)
+      const settings = await (window as any).ipcRenderer.invoke('load-llm-settings')
+      const optimizedText = await (window as any).ipcRenderer.invoke('optimize-prompt', {
+        message: message.value,
+        apiKey: settings?.apiKey || 'YOUR_API_KEY',
+        baseUrl: settings?.baseUrl || 'https://api.poly.ruguoapp.com/v1/chatbot',
+        model: settings?.model || 'default'
+      })
       message.value = optimizedText
     } catch (error) {
       console.error('Failed to optimize prompt:', error)

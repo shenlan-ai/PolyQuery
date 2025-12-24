@@ -2,7 +2,7 @@
   "name": "polyquery",
   "author": "lgy <2985302084@qq.com>",
   "private": true,
-  "version": "1.0.1",
+  "version": "1.0.2",
   "productName": "PolyQuery",
   "description": "A multi-source intelligent search tool that simultaneously sends your query to multiple websites and instantly delivers high-quality information.",
   "type": "module",

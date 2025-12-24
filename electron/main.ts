@@ -5,9 +5,9 @@ import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import Store from 'electron-store'
 import type { UpdateInfo } from 'electron-updater'
-import LLMConversation from './llm_conversation.ts'
-import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions'
-import { optimizePrompt } from './prompt_optimizer.ts'
+import { optimizePrompt } from '../src/prompt_optimizer'
+import LLMConversation from '../src/llm_conversation'
+
 
 // import { WebsiteData } from './website_data.ts'
 
@@ -53,7 +53,6 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 
 let win: BrowserWindow | null
 let tray: Tray | null
 let isQuitting = false  // 退出标志，用于区分关闭窗口和退出应用
-let conversation: LLMConversation | null = null
 
 function createBlankWindow() {
   const smallWin = new BrowserWindow({
@@ -208,13 +207,6 @@ app.whenReady().then(() => {
     safeLog('快捷键注册失败')
   }
 
-  // 创建 LLM conversation 实例
-  try {
-    conversation = new LLMConversation()
-  } catch (error) {
-    safeLog('Failed to initialize LLM conversation:', error)
-  }
-
   // 监听来自Smallwin的发送消息请求，转发到主窗口
   ipcMain.on('send-message-to-main-window', (_event, message) => {
     if (win) {
@@ -251,18 +243,25 @@ app.whenReady().then(() => {
     return store.get('allWebsiteConfigs', null)
   })
 
-  // 优化提示词
-  ipcMain.handle('optimize-prompt', async (_event, prompt: string) => {
-    if (!conversation) {
-      throw new Error('LLM conversation not initialized')
-    }
+  // 保存 LLM 设置
+  ipcMain.handle('save-llm-settings', async (_event, settings) => {
+    safeLog('save-llm-settings', settings)
+    store.set('llmSettings', settings)
+  })
+  // 加载 LLM 设置
+  ipcMain.handle('load-llm-settings', async () => {
+    safeLog('load-llm-settings', store.get('llmSettings', null))
+    return store.get('llmSettings', null)
+  })
+
+  // 处理 optimize-prompt 请求
+  ipcMain.handle('optimize-prompt', async (_event, { message, apiKey, baseUrl, model }) => {
     try {
-      const optimized = await optimizePrompt(prompt, conversation)
-      safeLog('Optimized prompt:', optimized)
-      return optimized
-    } catch (error) {
-      safeLog('Error optimizing prompt:', error)
-      throw error
+      const conversation = new LLMConversation(apiKey, baseUrl, model)
+      const optimizedText = await optimizePrompt(message, conversation)
+      return optimizedText
+    } catch (error: any) {
+      throw new Error(`Failed to optimize prompt: ${error.message}`)
     }
   })
 })

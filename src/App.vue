@@ -4,15 +4,24 @@ import WebViews from './components/webviews.vue'
 import WebSiteList from './components/websitelist.vue'
 import { ipcRenderer } from 'electron'
 import { setWebsiteConfigs, setAllWebsiteConfigs, getWebsiteConfigs, getAllWebsiteConfigs } from './types/website'
-import { Button } from 'ant-design-vue'
-import { UpOutlined, DownOutlined, SendOutlined } from '@ant-design/icons-vue'
+import { Button, Modal, Form, Input, FormItem } from 'ant-design-vue'
+import { UpOutlined, DownOutlined, SendOutlined, SettingOutlined } from '@ant-design/icons-vue'
+
 // import ChatComponent from './components/ChatComponent.vue'
 
 const message = ref('')
 const webViewsRef = ref<InstanceType<typeof WebViews> | null>(null)
 const isSidebarOpen = ref(false)
 const isInputCollapsed = ref(false)
-
+const apiKey = ref('YOUR_API_KEY')
+const baseUrl = ref('https://api.poly.ruguoapp.com/v1/chatbot')
+const model = ref('default')
+const isSettingsModalVisible = ref(false)
+const form = ref({
+  apiKey: '',
+  baseUrl: '',
+  model: ''
+})
 
 const sendMessage = async (msg?: string) => {
   const text = msg || message.value
@@ -28,7 +37,12 @@ const sendMessage = async (msg?: string) => {
 const optimizeMessage = async () => {
   if (message.value.trim()) {
     try {
-      const optimizedText = await ipcRenderer.invoke('optimize-prompt', message.value)
+      const optimizedText = await ipcRenderer.invoke('optimize-prompt', {
+        message: message.value,
+        apiKey: apiKey.value,
+        baseUrl: baseUrl.value,
+        model: model.value
+      })
       message.value = optimizedText
     } catch (error) {
       console.error('Failed to optimize prompt:', error)
@@ -51,12 +65,26 @@ onMounted(async () => {
   setWebsiteConfigs(loadedWebsiteConfigs)
   setAllWebsiteConfigs(loadedAllWebsiteConfigs)
 
+  // 加载 LLM 设置
+  const loadedLlmSettings = await ipcRenderer.invoke('load-llm-settings')
+  if (loadedLlmSettings) {
+    apiKey.value = loadedLlmSettings.apiKey || apiKey.value
+    baseUrl.value = loadedLlmSettings.baseUrl || baseUrl.value
+    model.value = loadedLlmSettings.model || model.value
+  }
+
   // 监听应用退出事件，保存激活websites和配置
-  ipcRenderer.on('app-quitting', () => {
+  ipcRenderer.on('app-quitting', async () => {
     // console.log('saving website configs:', getWebsiteConfigs())
     // console.log('saving all website configs:', getAllWebsiteConfigs())
     ipcRenderer.invoke('save-website-configs', getWebsiteConfigs())
     ipcRenderer.invoke('save-all-website-configs', getAllWebsiteConfigs())
+    // 保存 LLM 设置
+    await ipcRenderer.invoke('save-llm-settings', {
+      apiKey: apiKey.value,
+      baseUrl: baseUrl.value,
+      model: model.value
+    })
   })
 })
 
@@ -74,6 +102,29 @@ const handleSelectWebsite = (url: string) => {
     webViewsRef.value.scrollToWebsite(url)
   }
 }
+
+const openSettingsModal = () => {
+  form.value.apiKey = apiKey.value
+  form.value.baseUrl = baseUrl.value
+  form.value.model = model.value
+  isSettingsModalVisible.value = true
+}
+
+const handleSettingsOk = async () => {
+  apiKey.value = form.value.apiKey
+  baseUrl.value = form.value.baseUrl
+  model.value = form.value.model
+  await ipcRenderer.invoke('save-llm-settings', {
+    apiKey: apiKey.value,
+    baseUrl: baseUrl.value,
+    model: model.value
+  })
+  isSettingsModalVisible.value = false
+}
+
+const handleSettingsCancel = () => {
+  isSettingsModalVisible.value = false
+}
 </script>
 
 <template>
@@ -90,6 +141,15 @@ const handleSelectWebsite = (url: string) => {
             placeholder="How can I help you today?"
             rows="3"
           ></textarea>
+          <Button
+            class="settings-button"
+            shape="circle"
+            @click="openSettingsModal"
+          >
+            <template #icon>
+              <SettingOutlined />
+            </template>
+          </Button>
           <Button
             class="optimize-button"
             @click="optimizeMessage"
@@ -119,7 +179,25 @@ const handleSelectWebsite = (url: string) => {
         </Button>
       </div>
     </div>
-    
+
+    <Modal
+      v-model:open="isSettingsModalVisible"
+      title="设置"
+      @ok="handleSettingsOk"
+      @cancel="handleSettingsCancel"
+    >
+      <Form :model="form" layout="vertical">
+        <FormItem label="API Key" name="apiKey" help="用于访问 LLM 服务的密钥，请输入有效的 API Key">
+          <Input v-model:value="form.apiKey" placeholder="例如: sk-..." />
+        </FormItem>
+        <FormItem label="Base URL" name="baseUrl" help="LLM 服务的端点地址，默认使用 PolyQuery 服务">
+          <Input v-model:value="form.baseUrl" placeholder="例如: https://api.example.com/v1" />
+        </FormItem>
+        <FormItem label="Model" name="model" help="使用的 LLM 模型名称，请根据服务支持的模型填写">
+          <Input v-model:value="form.model" placeholder="例如: gpt-4, gpt-3.5-turbo" />
+        </FormItem>
+      </Form>
+    </Modal>
   </div>
 </template>
 
@@ -252,6 +330,31 @@ const handleSelectWebsite = (url: string) => {
   background: #372be2 !important;
 }
 
+.settings-button {
+  position: absolute;
+  bottom: 12px;
+  right: 148px;
+  width: 40px;
+  height: 40px;
+  border: 2px solid #000000 !important;
+  background: #000000 !important;
+  color: #ffffff !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.settings-button:hover {
+  border-color: #000000 !important;
+  background: #333333 !important;
+  color: #ffffff !important;
+}
+
+.settings-button:active {
+  background: #1a1a1a !important;
+}
+
 .send-button {
   position: absolute;
   bottom: 12px;
@@ -316,7 +419,8 @@ const handleSelectWebsite = (url: string) => {
 
 .input-container.collapsed .textarea-wrapper,
 .input-container.collapsed .send-button,
-.input-container.collapsed .optimize-button {
+.input-container.collapsed .optimize-button,
+.input-container.collapsed .settings-button {
   display: none;
 }
 
